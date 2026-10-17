@@ -1,10 +1,10 @@
 ## 1. Инструментальный каркас <!-- tier: fast -->
 
-- [ ] 1.1 Обновить `package.json`: зависимости (hono, @hono/node-server, zod, pino; dev: typescript, tsx, tsup, oxlint, oxfmt, vitest, @types/node), скрипты `dev`, `build`, `start`, `typecheck`, `lint`, `format`, `format:check`, `test`; выполнить установку через Bun (lock-файл в репозиторий)
-- [ ] 1.2 Добавить `tsconfig.json` (strict, ESM, NodeNext), `tsup.config.ts` (entry `src/main.ts`, target node24), `vitest.config.ts`, `.oxlintrc.json`, `.oxfmtrc.json`, обновить `.gitignore` (dist, node_modules, .env)
-- [ ] 1.3 Создать `src/app.ts` (композиция: Hono-приложение + массив модулей) и `src/modules/health/routes.ts` с `GET /health`; создать `src/main.ts` (создание приложения, serve, PORT из окружения с значением по умолчанию)
-- [ ] 1.4 Написать тест: `GET /health` через `app.request()` отвечает 200
-- [ ] 1.5 Прогнать `format`, `build`, `lint`, `format:check`, `test` — всё зелёное
+- [x] 1.1 Обновить `package.json`: зависимости (hono, @hono/node-server, zod, pino; dev: typescript, tsx, tsup, oxlint, oxfmt, vitest, @types/node), скрипты `dev`, `build`, `start`, `typecheck`, `lint`, `format`, `format:check`, `test`; выполнить установку через Bun (lock-файл в репозиторий)
+- [x] 1.2 Добавить `tsconfig.json` (strict, ESM, NodeNext), `tsup.config.ts` (entry `src/main.ts`, target node24), `vitest.config.ts`, `.oxlintrc.json`, `.oxfmtrc.json`, обновить `.gitignore` (dist, node_modules, .env)
+- [x] 1.3 Создать `src/app.ts` (композиция: Hono-приложение + массив модулей) и `src/modules/health/routes.ts` с `GET /health`; создать `src/main.ts` (создание приложения, serve, PORT из окружения с значением по умолчанию)
+- [x] 1.4 Написать тест: `GET /health` через `app.request()` отвечает 200
+- [x] 1.5 Прогнать `format`, `build`, `lint`, `format:check`, `test` — всё зелёное
 
 ## 2. Env, логирование и слой БД <!-- tier: heavy -->
 

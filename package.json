@@ -1,22 +1,44 @@
 {
   "name": "small-server-template",
-  "private": true,
   "version": "1.0.0",
-  "engines": {
-    "node": ">=24"
-  },
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/ikloster03/small-server-template.git"
   },
+  "type": "module",
   "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsup",
+    "start": "node dist/main.js",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
+    "test": "vitest run",
     "prepare": "mkdir -p .git/hooks && cp .githooks/commit-msg .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg",
     "commitlint": "commitlint --edit",
     "changelog": "changelogen"
   },
+  "dependencies": {
+    "@hono/node-server": "^1.19.0",
+    "hono": "^4.10.0",
+    "pino": "^9.7.0",
+    "zod": "^4.1.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "^21.2.3",
     "@commitlint/config-conventional": "^21.2.3",
-    "changelogen": "^0.6.2"
+    "@types/node": "^24.0.0",
+    "changelogen": "^0.6.2",
+    "oxfmt": "^0.73.0",
+    "oxlint": "^1.24.0",
+    "tsup": "^8.5.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }
