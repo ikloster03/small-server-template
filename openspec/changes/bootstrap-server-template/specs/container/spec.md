@@ -14,6 +14,20 @@
 - **WHEN** контейнер запускается с валидным `DATABASE_URL`
 - **THEN** сервер стартует от non-root пользователя без дополнительных аргументов
 
+### Requirement: Наличие и валидность файлов контейнера
+
+`Dockerfile` ДОЛЖЕН (MUST) существовать в корне репозитория, чтобы `docker build .` находил его без флага `-f`. Оба compose-файла (`docker-compose.yml`, `compose.external-db.yml`) ДОЛЖНЫ (MUST) существовать и проходить `docker compose -f <файл> config` без ошибок.
+
+#### Scenario: Сборка без явного пути к Dockerfile
+
+- **WHEN** выполняется `docker build .` из корня репозитория
+- **THEN** Dockerfile находится и используется по умолчанию
+
+#### Scenario: Проверка compose-конфигурации
+
+- **WHEN** выполняется `docker compose -f docker-compose.yml config` и `docker compose -f compose.external-db.yml config`
+- **THEN** обе команды завершаются без ошибок
+
 ### Requirement: Compose с локальной Postgres
 
 `docker-compose.yml` ДОЛЖЕН (MUST) определять сервис локальной Postgres и сервис сервера; сервер ДОЛЖЕН (MUST) стартовать после готовности БД (`depends_on` с условием healthcheck). `docker compose up` ДОЛЖЕН (MUST) поднимать рабочую связку: БД, миграции, сервер.

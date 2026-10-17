@@ -11,6 +11,7 @@
 - Добавляется инфраструктура: Docker multi-stage (установка на Bun-образе, рантайм node-alpine с бандлом tsup), docker compose в двух вариантах — локальная Postgres и внешняя БД.
 - Добавляется инструментальная обвязка кода: Bun как пакетный менеджер, oxlint + oxfmt, Vitest, tsx (dev) + tsup (prod), npm-скрипты.
 - Добавляется CI на GitHub Actions: typecheck + линт + тесты + сборка Docker-образа.
+- Чинится красный шаг `docker build` в CI: `Dockerfile` и `docker-compose.yml` из задач 6.2–6.3 не попали в репозиторий, поэтому сборка образа падает с `open Dockerfile: no such file or directory`; файлы восстанавливаются по решениям design, состав пайплайна не меняется.
 - README (EN/RU) переписывается под шаблон сервера: запуск, auth, отключение модулей, паттерн вебхука для бота (бот в код не входит), заметка про OAuth для публичных серверов.
 
 Не меняется: модель релизов через changelogen, commitlint + `.githooks`, OpenSpec-обвязка.

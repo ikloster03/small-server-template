@@ -81,6 +81,12 @@
 
 README EN/RU переписываются под сервер-шаблон: быстрый старт (template → compose up), env-переменные, токены и CLI, отключение модулей (одна строка), паттерн вебхука для бота (маршрут в том же Hono, без кода в шаблоне), заметка про OAuth для публичных серверов, MCP-подключение. Структура обоих файлов зеркальна.
 
+### D10. Починка CI: отсутствующие Docker-файлы
+
+Диагноз сбоя шага `docker build -t small-server-template:ci .` в CI (`transferring dockerfile: 2B`, затем `failed to read dockerfile: open Dockerfile: no such file or directory`): в репозитории нет `Dockerfile` и `docker-compose.yml`. Задачи 6.2–6.3 помечены выполненными, но файлы не были закоммичены (в той среде пути считались закрытыми для исполнителя), а `.github/workflows/ci.yml` уже добавлен — BuildKit не находит Dockerfile в корне контекста и шаг падает.
+
+Решение: создать оба файла по D7 — multi-stage `Dockerfile` (install на `oven/bun` → сборка `tsup` → рантайм `node:24-alpine` с `dist/`, `drizzle/`, `package.json`, non-root, `CMD node dist/main.js`) и `docker-compose.yml` (`db` + `server`, healthcheck, `depends_on: service_healthy`). Проверить, что `.dockerignore` не исключает входы сборки: `Dockerfile`, `package.json`, `bun.lock`, `tsconfig.json`, `tsup.config.ts`, `src/`, `drizzle/`. Шаг `docker build` в CI остаётся без изменений, без публикации. Пути `Dockerfile`, `docker-compose.yml` и `.github/` — обычные файлы репозитория, правятся исполнителем.
+
 ## Risks / Trade-offs
 
 - [Совместимость MCP SDK с Hono-хендлером] → transport в stateless-режиме работает с нативным fetch `Request`/`Response`; при расхождении версий SDK — зафиксировать рабочую версию в диапазоне и покрыть smoke-тестом регистрацию инструментов.
@@ -94,4 +100,4 @@ README EN/RU переписываются под сервер-шаблон: бы
 
 Новый код без существующих пользователей: изменения накатываются в ветке evolve через PR (модель изменений репозитория). Откат — revert коммита; миграций данных существующих инсталлов нет. Для пользователей шаблона путь обновления — сравнение с upstream-веткой (стандартная модель GitHub Template Repo).
 
-Ограничение реализации: файлы `Dockerfile`, `docker-compose.yml` и всё под `.github/` в этой среде редактируются только владельцем вручную; соответствующие группы (6 и 7 в tasks.md) отмечены как выполняемые вручную — остальные группы от них не зависят и оставляют репозиторий зелёным.
+Уточнение по ходу реализации: `Dockerfile` и `docker-compose.yml` из групп 6–7 в репозиторий не попали, из-за чего шаг `docker build` в CI падает; восстановление файлов вынесено в группу 9 (диагноз и решения — D10). Пути `Dockerfile`, `docker-compose.yml` и `.github/` — обычные файлы репозитория и правятся исполнителем; каждая группа оставляет репозиторий зелёным.

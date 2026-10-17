@@ -42,7 +42,9 @@
 
 ## 6. Docker и compose <!-- tier: heavy -->
 
-Правки `Dockerfile` и `docker-compose.yml` в этой группе выполняются вручную владельцем (для исполнителя-агента эти пути закрыты), остальные файлы — обычными задачами.
+Правки `Dockerfile` и `docker-compose.yml` в этой группе выполнялись вручную владельцем (для исполнителя-агента эти пути закрыты), остальные файлы — обычными задачами.
+
+Файлы 6.2 (`Dockerfile`) и 6.3 (`docker-compose.yml`) в репозиторий при этом не попали; группа 9 создаёт их заново — это обычные файлы репозитория.
 
 - [x] 6.1 Создать `.dockerignore` и `.env.example` со всеми переменными окружения и комментариями
 - [x] 6.2 Создать multi-stage `Dockerfile`: этап установки на `oven/bun` (`bun install --frozen-lockfile`), этап сборки бандла, рантайм `node:24-alpine` (только `dist/`, `drizzle/`, `package.json`), non-root пользователь, CMD — сервер
@@ -51,7 +53,7 @@
 
 ## 7. CI на GitHub Actions <!-- tier: fast -->
 
-Правки в `.github/` выполняются вручную владельцем (путь закрыт для исполнителя-агента).
+Workflow `.github/workflows/ci.yml` добавлен владельцем; правки в `.github/` — обычные задачи исполнителя (группа 10).
 
 - [x] 7.1 Создать `.github/workflows/ci.yml`: setup Bun → `bun install --frozen-lockfile` → `typecheck` → `lint` → `format:check` → `test` → `docker build` (без публикации); триггеры — pull request и push в `main`
 - [x] 7.2 Убедиться, что шаги CI соответствуют npm-скриптам, и прогнать эти скрипты локально
@@ -62,3 +64,17 @@
 - [x] 8.2 Переписать `README.ru.md` (RU) зеркально EN, с переключателем языков в шапке обоих файлов
 - [x] 8.3 Обновить `openspec/config.yaml`: context под новый стек (TypeScript, Hono, Bun, Drizzle, oxlint/oxfmt, Vitest)
 - [x] 8.4 Прогнать набор проверок и `openspec validate --strict`
+
+## 9. Docker-файлы для починки CI <!-- tier: heavy -->
+
+Шаг `docker build` в CI падает с `open Dockerfile: no such file or directory`: `Dockerfile` и `docker-compose.yml` из задач 6.2–6.3 отсутствуют в репозитории. Группа создаёт их по design D7/D10; это обычные файлы репозитория, правятся исполнителем.
+
+- [ ] 9.1 Создать multi-stage `Dockerfile` по D7: этап install на `oven/bun` (`bun install --frozen-lockfile`), этап сборки `tsup`, рантайм `node:24-alpine` (только `dist/`, `drizzle/`, `package.json`), non-root пользователь, `CMD node dist/main.js` <!-- est: 30m -->
+- [ ] 9.2 Создать `docker-compose.yml`: сервисы `db` (postgres, healthcheck) и `server` (build, healthcheck по `/health`, `depends_on: service_healthy`), переменные окружения зеркально `compose.external-db.yml` <!-- est: 20m -->
+- [ ] 9.3 Проверить, что `.dockerignore` не исключает входы сборки: `Dockerfile`, `package.json`, `bun.lock`, `tsconfig.json`, `tsup.config.ts`, `src/`, `drizzle/` <!-- est: 5m -->
+- [ ] 9.4 Проверить локально `docker compose -f docker-compose.yml config` и `docker compose -f compose.external-db.yml config`; при доступном Docker — `docker build -t small-server-template:ci .`; прогнать `format`, `build`, `lint`, `format:check`, `test` и `openspec validate` <!-- est: 10m -->
+
+## 10. Зелёный шаг Docker build в CI <!-- tier: fast -->
+
+- [ ] 10.1 Сверить шаг Docker build в `.github/workflows/ci.yml` с локальной командой сборки (`docker build -t small-server-template:ci .`, без публикации) и убедиться, что после группы 9 Dockerfile находится в корне контекста; при необходимости поправить шаг <!-- est: 5m -->
+- [ ] 10.2 Прогнать полный набор проверок группы и `openspec validate --strict` <!-- est: 5m -->
