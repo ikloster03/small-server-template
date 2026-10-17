@@ -76,5 +76,5 @@ Workflow `.github/workflows/ci.yml` добавлен владельцем; пр�
 
 ## 10. Зелёный шаг Docker build в CI <!-- tier: fast -->
 
-- [ ] 10.1 Сверить шаг Docker build в `.github/workflows/ci.yml` с локальной командой сборки (`docker build -t small-server-template:ci .`, без публикации) и убедиться, что после группы 9 Dockerfile находится в корне контекста; при необходимости поправить шаг <!-- est: 5m -->
-- [ ] 10.2 Прогнать полный набор проверок группы и `openspec validate --strict` <!-- est: 5m -->
+- [x] 10.1 Сверить шаг Docker build в `.github/workflows/ci.yml` с локальной командой сборки (`docker build -t small-server-template:ci .`, без публикации) и убедиться, что после группы 9 Dockerfile находится в корне контекста; при необходимости поправить шаг <!-- est: 5m -->
+- [x] 10.2 Прогнать полный набор проверок группы и `openspec validate --strict` <!-- est: 5m -->
