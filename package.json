@@ -18,7 +18,7 @@
     "test": "vitest run",
     "token": "node dist/token.js",
     "db:generate": "drizzle-kit generate",
-    "prepare": "mkdir -p .git/hooks && cp .githooks/commit-msg .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg",
+    "prepare": "test ! -d .githooks || { mkdir -p .git/hooks && cp .githooks/commit-msg .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg; }",
     "commitlint": "commitlint --edit",
     "changelog": "changelogen"
   },
