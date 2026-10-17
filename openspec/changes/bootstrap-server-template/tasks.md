@@ -1,0 +1,88 @@
+## 1. Инструментальный каркас <!-- tier: fast -->
+
+- [x] 1.1 Обновить `package.json`: зависимости (hono, @hono/node-server, zod, pino; dev: typescript, tsx, tsup, oxlint, oxfmt, vitest, @types/node), скрипты `dev`, `build`, `start`, `typecheck`, `lint`, `format`, `format:check`, `test`; выполнить установку через Bun (lock-файл в репозиторий)
+- [x] 1.2 Добавить `tsconfig.json` (strict, ESM, NodeNext), `tsup.config.ts` (entry `src/main.ts`, target node24), `vitest.config.ts`, `.oxlintrc.json`, `.oxfmtrc.json`, обновить `.gitignore` (dist, node_modules, .env)
+- [x] 1.3 Создать `src/app.ts` (композиция: Hono-приложение + массив модулей) и `src/modules/health/routes.ts` с `GET /health`; создать `src/main.ts` (создание приложения, serve, PORT из окружения с значением по умолчанию)
+- [x] 1.4 Написать тест: `GET /health` через `app.request()` отвечает 200
+- [x] 1.5 Прогнать `format`, `build`, `lint`, `format:check`, `test` — всё зелёное
+
+## 2. Env, логирование и слой БД <!-- tier: heavy -->
+
+- [x] 2.1 Создать `src/env.ts`: zod-схема `PORT`, `DATABASE_URL`, `LOG_LEVEL`, `AUTH_DISABLED` с fail-fast разбором; тесты: невалидный/отсутствующий env завершает процесс с понятной ошибкой
+- [x] 2.2 Создать `src/logger.ts` (pino, уровень из env) и middleware request-id: чтение/генерация `x-request-id`, запись в контекст, возврат заголовком; тест: запрос без заголовка получает сгенерированный `x-request-id`
+- [x] 2.3 Создать `src/db/client.ts` (postgres.js пул + drizzle, параметры из `DATABASE_URL`, операция закрытия пула), каталог `src/db/schema/`, `drizzle.config.ts` и скрипт `db:generate`; инициализировать каталог `drizzle/` с пустым journal
+- [x] 2.4 Собрать старт в `src/main.ts`: env → пул → `migrate()` (drizzle-orm/postgres-js/migrator) → serve; порт открывается только после миграций, ошибка на любом шаге — выход с кодом 1
+- [x] 2.5 Тесты: порядок старта (serve не вызывается при ошибке миграции — мока), закрытие пула экспонировано
+- [x] 2.6 Прогнать полный набор проверок группы
+
+## 3. Готовность, graceful shutdown и OpenAPI <!-- tier: heavy -->
+
+- [x] 3.1 Добавить `GET /ready`: `SELECT 1` через пул, 200 при живой БД, 503 при ошибке; тесты с подменой пула на живой/падающий
+- [x] 3.2 Реализовать graceful shutdown по SIGTERM/SIGINT: `server.close()` → `pool.end()` → выход 0, с таймаутом принудительного выхода; тест: обработчики вызываются в правильном порядке, таймаут срабатывает
+- [x] 3.3 Подключить OpenAPI: описание маршрутов (hono-openapi/describeRoute), выдача спецификации и Scalar UI на `/doc`; тест: в спецификации присутствуют `/health` и `/ready`
+- [x] 3.4 Прогнать полный набор проверок группы
+
+## 4. Аутентификация bearer-токенами <!-- tier: heavy -->
+
+- [x] 4.1 Описать схему `src/db/schema/token.ts` (`id`, `name`, `token_hash`, `prefix`, `created_at`, `revoked_at`, `last_used_at`, индекс по `token_hash`) и сгенерировать миграцию `drizzle-kit generate`
+- [x] 4.2 Создать репозиторий токенов (интерфейс + drizzle-реализация + in-memory реализация для тестов): list/create/revoke/find-active-by-hash/touch-last-used
+- [x] 4.3 Создать сервис токенов: генерация секрета (crypto), sha-256 хэш, prefix, отзыв по id или имени; секрет возвращается только при создании
+- [x] 4.4 Создать bearer-middleware: парсинг `Authorization`, поиск активного токена по хэшу, 401 + `WWW-Authenticate: Bearer` при отсутствии/невалидности/отзыве, обновление `last_used_at`; поддержка `AUTH_DISABLED=true`; тесты всех сценариев
+- [x] 4.5 Создать CLI `src/cli/token.ts` (list/create/revoke), второй entry в tsup (`dist/token.js`), скрипт `token`; тесты команд на in-memory репозитории (секрет печатается один раз, list без секретов)
+- [x] 4.6 Добавить API-слот: пример защищённого маршрута `/api` под bearer-middleware (`/health`, `/ready`, `/doc` без токена); тесты
+- [x] 4.7 Прогнать полный набор проверок группы
+
+## 5. MCP-модуль <!-- tier: heavy -->
+
+- [x] 5.1 Создать `src/modules/mcp/tools/registry.ts`: транспорт-агностичный реестр инструментов (имя, описание, zod-схема, обработчик) и регистратор в `McpServer`; тест: добавленный инструмент появляется в сервере
+- [x] 5.2 Добавить пример инструмента (echo-класса) в реестр; тест: вызов с корректными аргументами возвращает результат
+- [x] 5.3 Смонтировать MCP-эндпоинт `/mcp` через Streamable HTTP (stateless, `@modelcontextprotocol/sdk`) в модуле `src/modules/mcp/`, под защитой bearer-middleware; тесты: без токена 401, initialize по протоколу MCP проходит с токеном
+- [x] 5.4 Зарегистрировать MCP-модуль в `src/app.ts` одной строкой; тест: композиция без этой строки отвечает `/mcp` 404 и стартует без ошибок
+- [x] 5.5 Прогнать полный набор проверок группы
+
+## 6. Docker и compose <!-- tier: heavy -->
+
+Правки `Dockerfile` и `docker-compose.yml` в этой группе выполнялись вручную владельцем (для исполнителя-агента эти пути закрыты), остальные файлы — обычными задачами.
+
+Файлы 6.2 (`Dockerfile`) и 6.3 (`docker-compose.yml`) в репозиторий при этом не попали; группа 9 создаёт их заново — это обычные файлы репозитория.
+
+- [x] 6.1 Создать `.dockerignore` и `.env.example` со всеми переменными окружения и комментариями
+- [x] 6.2 Создать multi-stage `Dockerfile`: этап установки на `oven/bun` (`bun install --frozen-lockfile`), этап сборки бандла, рантайм `node:24-alpine` (только `dist/`, `drizzle/`, `package.json`), non-root пользователь, CMD — сервер
+- [x] 6.3 Создать `docker-compose.yml` (postgres + server, healthcheck по `/health`, `depends_on: service_healthy`) и `compose.external-db.yml` (только server, `DATABASE_URL` из env)
+- [x] 6.4 Проверить `docker compose config` для обоих вариантов и прогнать набор проверок группы
+
+## 7. CI на GitHub Actions <!-- tier: fast -->
+
+Workflow `.github/workflows/ci.yml` добавлен владельцем; правки в `.github/` — обычные задачи исполнителя (группа 10).
+
+- [x] 7.1 Создать `.github/workflows/ci.yml`: setup Bun → `bun install --frozen-lockfile` → `typecheck` → `lint` → `format:check` → `test` → `docker build` (без публикации); триггеры — pull request и push в `main`
+- [x] 7.2 Убедиться, что шаги CI соответствуют npm-скриптам, и прогнать эти скрипты локально
+
+## 8. Документация <!-- tier: fast -->
+
+- [x] 8.1 Переписать `README.md` (EN): назначение шаблона, быстрый старт (Use this template → docker compose up → проверка /health, /ready, Scalar), переменные окружения, токены и CLI в контейнере, отключение модулей одной строкой, паттерн вебхука для бота, подключение MCP-клиента, заметка про OAuth для публичных серверов
+- [x] 8.2 Переписать `README.ru.md` (RU) зеркально EN, с переключателем языков в шапке обоих файлов
+- [x] 8.3 Обновить `openspec/config.yaml`: context под новый стек (TypeScript, Hono, Bun, Drizzle, oxlint/oxfmt, Vitest)
+- [x] 8.4 Прогнать набор проверок и `openspec validate --strict`
+
+## 9. Docker-файлы для починки CI <!-- tier: heavy -->
+
+Шаг `docker build` в CI падает с `open Dockerfile: no such file or directory`: `Dockerfile` и `docker-compose.yml` из задач 6.2–6.3 отсутствуют в репозитории. Группа создаёт их по design D7/D10; это обычные файлы репозитория, правятся исполнителем.
+
+- [x] 9.1 Создать multi-stage `Dockerfile` по D7: этап install на `oven/bun` (`bun install --frozen-lockfile`), этап сборки `tsup`, рантайм `node:24-alpine` (только `dist/`, `drizzle/`, `package.json`), non-root пользователь, `CMD node dist/main.js` <!-- est: 30m -->
+- [x] 9.2 Создать `docker-compose.yml`: сервисы `db` (postgres, healthcheck) и `server` (build, healthcheck по `/health`, `depends_on: service_healthy`), переменные окружения зеркально `compose.external-db.yml` <!-- est: 20m -->
+- [x] 9.3 Проверить, что `.dockerignore` не исключает входы сборки: `Dockerfile`, `package.json`, `bun.lock`, `tsconfig.json`, `tsup.config.ts`, `src/`, `drizzle/` <!-- est: 5m -->
+- [x] 9.4 Проверить локально `docker compose -f docker-compose.yml config` и `docker compose -f compose.external-db.yml config`; при доступном Docker — `docker build -t small-server-template:ci .`; прогнать `format`, `build`, `lint`, `format:check`, `test` и `openspec validate` <!-- est: 10m -->
+
+## 10. Зелёный шаг Docker build в CI <!-- tier: fast -->
+
+- [x] 10.1 Сверить шаг Docker build в `.github/workflows/ci.yml` с локальной командой сборки (`docker build -t small-server-template:ci .`, без публикации) и убедиться, что после группы 9 Dockerfile находится в корне контекста; при необходимости поправить шаг <!-- est: 5m -->
+- [x] 10.2 Прогнать полный набор проверок группы и `openspec validate --strict` <!-- est: 5m -->
+
+## 11. Починка prepare-скрипта для Docker-сборки <!-- tier: fast -->
+
+Шаг `docker build` в CI падает на `bun install --frozen-lockfile` (шаг install): root-скрипт `prepare` копирует `.githooks/commit-msg`, которого нет в Docker-этапе и который исключён из контекста через `.dockerignore`. Диагноз и решение — D11; Dockerfile, `.dockerignore` и пайплайн не меняются.
+
+- [x] 11.1 Изменить `prepare` в `package.json`: при отсутствии каталога `.githooks` завершаться успешно без побочных эффектов (no-op по D11), при наличии — устанавливать хук как раньше; настоящие ошибки копирования не маскировать <!-- est: 5m -->
+- [x] 11.2 Проверить оба режима локально: в каталоге без `.githooks` скрипт возвращает 0 (симуляция Docker-этапа install), в репозитории хук `commit-msg` устанавливается в `.git/hooks` и остаётся исполняемым <!-- est: 10m -->
+- [x] 11.3 При доступном Docker — `docker build -t small-server-template:ci .` до успешного завершения; прогнать `format`, `build`, `lint`, `format:check`, `test` и `openspec validate --strict` <!-- est: 10m -->
