@@ -58,7 +58,7 @@
 
 ## 8. Документация <!-- tier: fast -->
 
-- [ ] 8.1 Переписать `README.md` (EN): назначение шаблона, быстрый старт (Use this template → docker compose up → проверка /health, /ready, Scalar), переменные окружения, токены и CLI в контейнере, отключение модулей одной строкой, паттерн вебхука для бота, подключение MCP-клиента, заметка про OAuth для публичных серверов
-- [ ] 8.2 Переписать `README.ru.md` (RU) зеркально EN, с переключателем языков в шапке обоих файлов
-- [ ] 8.3 Обновить `openspec/config.yaml`: context под новый стек (TypeScript, Hono, Bun, Drizzle, oxlint/oxfmt, Vitest)
-- [ ] 8.4 Прогнать набор проверок и `openspec validate --strict`
+- [x] 8.1 Переписать `README.md` (EN): назначение шаблона, быстрый старт (Use this template → docker compose up → проверка /health, /ready, Scalar), переменные окружения, токены и CLI в контейнере, отключение модулей одной строкой, паттерн вебхука для бота, подключение MCP-клиента, заметка про OAuth для публичных серверов
+- [x] 8.2 Переписать `README.ru.md` (RU) зеркально EN, с переключателем языков в шапке обоих файлов
+- [x] 8.3 Обновить `openspec/config.yaml`: context под новый стек (TypeScript, Hono, Bun, Drizzle, oxlint/oxfmt, Vitest)
+- [x] 8.4 Прогнать набор проверок и `openspec validate --strict`
