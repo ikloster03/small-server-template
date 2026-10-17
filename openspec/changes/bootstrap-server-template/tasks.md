@@ -8,12 +8,12 @@
 
 ## 2. Env, логирование и слой БД <!-- tier: heavy -->
 
-- [ ] 2.1 Создать `src/env.ts`: zod-схема `PORT`, `DATABASE_URL`, `LOG_LEVEL`, `AUTH_DISABLED` с fail-fast разбором; тесты: невалидный/отсутствующий env завершает процесс с понятной ошибкой
-- [ ] 2.2 Создать `src/logger.ts` (pino, уровень из env) и middleware request-id: чтение/генерация `x-request-id`, запись в контекст, возврат заголовком; тест: запрос без заголовка получает сгенерированный `x-request-id`
-- [ ] 2.3 Создать `src/db/client.ts` (postgres.js пул + drizzle, параметры из `DATABASE_URL`, операция закрытия пула), каталог `src/db/schema/`, `drizzle.config.ts` и скрипт `db:generate`; инициализировать каталог `drizzle/` с пустым journal
-- [ ] 2.4 Собрать старт в `src/main.ts`: env → пул → `migrate()` (drizzle-orm/postgres-js/migrator) → serve; порт открывается только после миграций, ошибка на любом шаге — выход с кодом 1
-- [ ] 2.5 Тесты: порядок старта (serve не вызывается при ошибке миграции — мока), закрытие пула экспонировано
-- [ ] 2.6 Прогнать полный набор проверок группы
+- [x] 2.1 Создать `src/env.ts`: zod-схема `PORT`, `DATABASE_URL`, `LOG_LEVEL`, `AUTH_DISABLED` с fail-fast разбором; тесты: невалидный/отсутствующий env завершает процесс с понятной ошибкой
+- [x] 2.2 Создать `src/logger.ts` (pino, уровень из env) и middleware request-id: чтение/генерация `x-request-id`, запись в контекст, возврат заголовком; тест: запрос без заголовка получает сгенерированный `x-request-id`
+- [x] 2.3 Создать `src/db/client.ts` (postgres.js пул + drizzle, параметры из `DATABASE_URL`, операция закрытия пула), каталог `src/db/schema/`, `drizzle.config.ts` и скрипт `db:generate`; инициализировать каталог `drizzle/` с пустым journal
+- [x] 2.4 Собрать старт в `src/main.ts`: env → пул → `migrate()` (drizzle-orm/postgres-js/migrator) → serve; порт открывается только после миграций, ошибка на любом шаге — выход с кодом 1
+- [x] 2.5 Тесты: порядок старта (serve не вызывается при ошибке миграции — мока), закрытие пула экспонировано
+- [x] 2.6 Прогнать полный набор проверок группы
 
 ## 3. Готовность, graceful shutdown и OpenAPI <!-- tier: heavy -->
 

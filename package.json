@@ -16,14 +16,17 @@
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
     "test": "vitest run",
+    "db:generate": "drizzle-kit generate",
     "prepare": "mkdir -p .git/hooks && cp .githooks/commit-msg .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg",
     "commitlint": "commitlint --edit",
     "changelog": "changelogen"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.0",
+    "drizzle-orm": "^0.45.4",
     "hono": "^4.10.0",
     "pino": "^9.7.0",
+    "postgres": "^3.4.9",
     "zod": "^4.1.0"
   },
   "devDependencies": {
@@ -31,6 +34,7 @@
     "@commitlint/config-conventional": "^21.2.3",
     "@types/node": "^24.0.0",
     "changelogen": "^0.6.2",
+    "drizzle-kit": "^0.31.11",
     "oxfmt": "^0.73.0",
     "oxlint": "^1.24.0",
     "tsup": "^8.5.0",
