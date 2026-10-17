@@ -1,0 +1,37 @@
+# VCS и хуки
+.git
+.gitignore
+.gitattributes
+.githooks
+
+# CI и релизная обвязка
+.github
+
+# Зависимости и артефакты сборки
+node_modules
+dist
+coverage
+
+# Секреты окружения (не попадают в контекст сборки)
+.env
+.env.*
+
+# Каталоги редакторов и агентов
+.claude
+.cursor
+.opencode
+.idea
+.vscode
+
+# OpenSpec-обвязка
+openspec
+
+# Документация и прочее, не нужное для сборки образа
+*.md
+LICENSE
+CHANGELOG.md
+commitlint.config.js
+drizzle.config.ts
+vitest.config.ts
+.oxlintrc.json
+.oxfmtrc.json

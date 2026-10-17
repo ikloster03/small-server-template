@@ -1,0 +1,22 @@
+# Вариант compose с внешней базой данных: поднимается только сервер.
+# DATABASE_URL задаётся в .env или в окружении, затем:
+#   docker compose -f compose.external-db.yml up
+services:
+  server:
+    build:
+      context: .
+    image: small-server-template
+    restart: unless-stopped
+    environment:
+      PORT: ${PORT:-3000}
+      DATABASE_URL: ${DATABASE_URL:?set DATABASE_URL in .env or in the shell environment}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      AUTH_DISABLED: ${AUTH_DISABLED:-false}
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:$${PORT:-3000}/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s

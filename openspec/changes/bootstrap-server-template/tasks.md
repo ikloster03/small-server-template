@@ -44,7 +44,7 @@
 
 Правки `Dockerfile` и `docker-compose.yml` в этой группе выполняются вручную владельцем (для исполнителя-агента эти пути закрыты), остальные файлы — обычными задачами.
 
-- [ ] 6.1 Создать `.dockerignore` и `.env.example` со всеми переменными окружения и комментариями
+- [x] 6.1 Создать `.dockerignore` и `.env.example` со всеми переменными окружения и комментариями
 - [ ] 6.2 Создать multi-stage `Dockerfile`: этап установки на `oven/bun` (`bun install --frozen-lockfile`), этап сборки бандла, рантайм `node:24-alpine` (только `dist/`, `drizzle/`, `package.json`), non-root пользователь, CMD — сервер
 - [ ] 6.3 Создать `docker-compose.yml` (postgres + server, healthcheck по `/health`, `depends_on: service_healthy`) и `compose.external-db.yml` (только server, `DATABASE_URL` из env)
 - [ ] 6.4 Проверить `docker compose config` для обоих вариантов и прогнать набор проверок группы
