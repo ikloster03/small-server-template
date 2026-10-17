@@ -7,6 +7,7 @@ describe("createDb", () => {
 
     expect(pool.db).toBeDefined();
     expect(typeof pool.close).toBe("function");
+    expect(typeof pool.ready).toBe("function");
     await expect(pool.close()).resolves.toBeUndefined();
   });
 });

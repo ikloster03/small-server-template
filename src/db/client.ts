@@ -7,6 +7,7 @@ export interface DbPool {
   sql: postgres.Sql;
   db: PostgresJsDatabase<typeof schema>;
   close: () => Promise<void>;
+  ready: () => Promise<void>;
 }
 
 export function createDb(env: Pick<Env, "DATABASE_URL">): DbPool {
@@ -16,5 +17,8 @@ export function createDb(env: Pick<Env, "DATABASE_URL">): DbPool {
     sql,
     db,
     close: () => sql.end({ timeout: 5 }),
+    ready: async () => {
+      await sql`select 1`;
+    },
   };
 }

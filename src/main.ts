@@ -5,10 +5,16 @@ import { createApp } from "./app.js";
 import { createDb } from "./db/client.js";
 import { loadEnv } from "./env.js";
 import { createLogger } from "./logger.js";
+import { enableGracefulShutdown } from "./shutdown.js";
 
 const migrationsFolder = fileURLToPath(new URL("../drizzle", import.meta.url));
 
-export async function bootstrap(): Promise<void> {
+export interface BootstrapHandle {
+  server: ReturnType<typeof serve>;
+  disposeSignalHandlers: () => void;
+}
+
+export async function bootstrap(): Promise<BootstrapHandle> {
   const env = loadEnv();
   const logger = createLogger(env);
   const pool = createDb(env);
@@ -19,10 +25,16 @@ export async function bootstrap(): Promise<void> {
     await pool.close().catch(() => {});
     process.exit(1);
   }
-  const app = createApp({ logger });
-  serve({ fetch: app.fetch, port: env.PORT }, (info) => {
+  const app = createApp({ logger, db: pool });
+  const server = serve({ fetch: app.fetch, port: env.PORT }, (info) => {
     logger.info({ port: info.port }, "server listening");
   });
+  const disposeSignalHandlers = enableGracefulShutdown({
+    logger,
+    server,
+    closePool: () => pool.close(),
+  });
+  return { server, disposeSignalHandlers };
 }
 
 if (process.env.VITEST === undefined) {
