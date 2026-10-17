@@ -53,8 +53,8 @@
 
 Правки в `.github/` выполняются вручную владельцем (путь закрыт для исполнителя-агента).
 
-- [ ] 7.1 Создать `.github/workflows/ci.yml`: setup Bun → `bun install --frozen-lockfile` → `typecheck` → `lint` → `format:check` → `test` → `docker build` (без публикации); триггеры — pull request и push в `main`
-- [ ] 7.2 Убедиться, что шаги CI соответствуют npm-скриптам, и прогнать эти скрипты локально
+- [x] 7.1 Создать `.github/workflows/ci.yml`: setup Bun → `bun install --frozen-lockfile` → `typecheck` → `lint` → `format:check` → `test` → `docker build` (без публикации); триггеры — pull request и push в `main`
+- [x] 7.2 Убедиться, что шаги CI соответствуют npm-скриптам, и прогнать эти скрипты локально
 
 ## 8. Документация <!-- tier: fast -->
 
