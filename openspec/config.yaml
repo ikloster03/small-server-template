@@ -1,7 +1,8 @@
 schema: spec-driven
 
 context: |
-  Tech stack: Node.js
+  Tech stack: TypeScript (strict, ESM), Hono on Node.js, PostgreSQL with Drizzle ORM + postgres.js, zod for env validation, pino for logging.
+  Tooling: Bun as the package manager, tsx for dev, tsup for the production bundle, oxlint + oxfmt for lint and format, Vitest for tests.
   Commits: Conventional Commits via commitlint. Do not add Co-authored-by trailers.
   Releases: changelogen on GitHub Actions. The first release from 0.0.0 is 1.0.0.
 
