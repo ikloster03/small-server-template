@@ -78,3 +78,11 @@ Workflow `.github/workflows/ci.yml` добавлен владельцем; пр�
 
 - [x] 10.1 Сверить шаг Docker build в `.github/workflows/ci.yml` с локальной командой сборки (`docker build -t small-server-template:ci .`, без публикации) и убедиться, что после группы 9 Dockerfile находится в корне контекста; при необходимости поправить шаг <!-- est: 5m -->
 - [x] 10.2 Прогнать полный набор проверок группы и `openspec validate --strict` <!-- est: 5m -->
+
+## 11. Починка prepare-скрипта для Docker-сборки <!-- tier: fast -->
+
+Шаг `docker build` в CI падает на `bun install --frozen-lockfile` (шаг install): root-скрипт `prepare` копирует `.githooks/commit-msg`, которого нет в Docker-этапе и который исключён из контекста через `.dockerignore`. Диагноз и решение — D11; Dockerfile, `.dockerignore` и пайплайн не меняются.
+
+- [ ] 11.1 Изменить `prepare` в `package.json`: при отсутствии каталога `.githooks` завершаться успешно без побочных эффектов (no-op по D11), при наличии — устанавливать хук как раньше; настоящие ошибки копирования не маскировать <!-- est: 5m -->
+- [ ] 11.2 Проверить оба режима локально: в каталоге без `.githooks` скрипт возвращает 0 (симуляция Docker-этапа install), в репозитории хук `commit-msg` устанавливается в `.git/hooks` и остаётся исполняемым <!-- est: 10m -->
+- [ ] 11.3 При доступном Docker — `docker build -t small-server-template:ci .` до успешного завершения; прогнать `format`, `build`, `lint`, `format:check`, `test` и `openspec validate --strict` <!-- est: 10m -->

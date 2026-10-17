@@ -87,6 +87,14 @@ README EN/RU переписываются под сервер-шаблон: бы
 
 Решение: создать оба файла по D7 — multi-stage `Dockerfile` (install на `oven/bun` → сборка `tsup` → рантайм `node:24-alpine` с `dist/`, `drizzle/`, `package.json`, non-root, `CMD node dist/main.js`) и `docker-compose.yml` (`db` + `server`, healthcheck, `depends_on: service_healthy`). Проверить, что `.dockerignore` не исключает входы сборки: `Dockerfile`, `package.json`, `bun.lock`, `tsconfig.json`, `tsup.config.ts`, `src/`, `drizzle/`. Шаг `docker build` в CI остаётся без изменений, без публикации. Пути `Dockerfile`, `docker-compose.yml` и `.github/` — обычные файлы репозитория, правятся исполнителем.
 
+### D11. Починка CI: prepare-скрипт в Docker-этапе install
+
+Диагноз повторного сбоя шага `docker build` (шаг `#13 [install 4/4] RUN bun install --frozen-lockfile`): `bun install` выполняет root-скрипт `prepare` из `package.json`, который делает `mkdir -p .git/hooks && cp .githooks/commit-msg …`. В Docker-этапе install по D7 копируются только `package.json` и `bun.lock`, а `.githooks` к тому же исключён из контекста сборки через `.dockerignore` (раздел «VCS и хуки») — `cp` падает с `cannot stat '.githooks/commit-msg': No such file or directory`, prepare выходит с кодом 1 и роняет всю сборку образа.
+
+Решение: `prepare` становится no-op, когда каталог `.githooks` отсутствует (паттерн husky: git-хуки нужны только в рабочем чекауте разработчика). Референтная форма: `test ! -d .githooks || { mkdir -p .git/hooks && cp .githooks/commit-msg .git/hooks/commit-msg && chmod +x .git/hooks/commit-msg; }` — в рабочем чекауте поведение не меняется, а настоящий сбой копирования не маскируется (при наличии `.githooks` код выхода определяется самой установкой хука). `Dockerfile`, `.dockerignore` и `.github/workflows/ci.yml` не меняются. CI на GitHub Actions не затронут: после checkout `.githooks` присутствует и хук устанавливается как раньше.
+
+Альтернативы отвергнуты: (1) копировать `.githooks` в этап install и убрать каталог из `.dockerignore` — образ получает файлы хостовской git-обвязки, которые внутри не нужны, ради удовлетворения пакетного скрипта; (2) `bun install --ignore-scripts` в Dockerfile — пропускает и lifecycle-скрипты зависимостей, то есть изменение шире, чем нужно для починки.
+
 ## Risks / Trade-offs
 
 - [Совместимость MCP SDK с Hono-хендлером] → transport в stateless-режиме работает с нативным fetch `Request`/`Response`; при расхождении версий SDK — зафиксировать рабочую версию в диапазоне и покрыть smoke-тестом регистрацию инструментов.
@@ -101,3 +109,5 @@ README EN/RU переписываются под сервер-шаблон: бы
 Новый код без существующих пользователей: изменения накатываются в ветке evolve через PR (модель изменений репозитория). Откат — revert коммита; миграций данных существующих инсталлов нет. Для пользователей шаблона путь обновления — сравнение с upstream-веткой (стандартная модель GitHub Template Repo).
 
 Уточнение по ходу реализации: `Dockerfile` и `docker-compose.yml` из групп 6–7 в репозиторий не попали, из-за чего шаг `docker build` в CI падает; восстановление файлов вынесено в группу 9 (диагноз и решения — D10). Пути `Dockerfile`, `docker-compose.yml` и `.github/` — обычные файлы репозитория и правятся исполнителем; каждая группа оставляет репозиторий зелёным.
+
+Второе уточнение: после восстановления Docker-файлов шаг `docker build` падает на prepare-скрипте `bun install` (D11); починка вынесена в группу 11 и не меняет Dockerfile и пайплайн.

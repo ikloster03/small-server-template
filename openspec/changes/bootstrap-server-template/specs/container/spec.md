@@ -14,6 +14,20 @@
 - **WHEN** контейнер запускается с валидным `DATABASE_URL`
 - **THEN** сервер стартует от non-root пользователя без дополнительных аргументов
 
+### Requirement: Установка зависимостей без git-обвязки
+
+Скрипт `prepare` из `package.json` ДОЛЖЕН (MUST) завершаться успешно в окружениях без каталога `.githooks` (Docker-этап установки, минимальные чекауты), не пытаясь копировать git-хуки. В рабочем чекауте с `.githooks` скрипт ДОЛЖЕН (MUST) по-прежнему устанавливать хук `commit-msg` в `.git/hooks`.
+
+#### Scenario: Установка в Docker-этапе install
+
+- **WHEN** `bun install --frozen-lockfile` выполняется в Docker-этапе install, куда скопированы только `package.json` и `bun.lock`
+- **THEN** `prepare` завершается успешно как no-op и сборка образа продолжается
+
+#### Scenario: Установка в рабочем чекауте
+
+- **WHEN** установка выполняется в репозитории с каталогом `.githooks`
+- **THEN** хук `commit-msg` устанавливается в `.git/hooks` как раньше
+
 ### Requirement: Наличие и валидность файлов контейнера
 
 `Dockerfile` ДОЛЖЕН (MUST) существовать в корне репозитория, чтобы `docker build .` находил его без флага `-f`. Оба compose-файла (`docker-compose.yml`, `compose.external-db.yml`) ДОЛЖНЫ (MUST) существовать и проходить `docker compose -f <файл> config` без ошибок.
