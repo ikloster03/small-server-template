@@ -24,13 +24,13 @@
 
 ## 4. Аутентификация bearer-токенами <!-- tier: heavy -->
 
-- [ ] 4.1 Описать схему `src/db/schema/token.ts` (`id`, `name`, `token_hash`, `prefix`, `created_at`, `revoked_at`, `last_used_at`, индекс по `token_hash`) и сгенерировать миграцию `drizzle-kit generate`
-- [ ] 4.2 Создать репозиторий токенов (интерфейс + drizzle-реализация + in-memory реализация для тестов): list/create/revoke/find-active-by-hash/touch-last-used
-- [ ] 4.3 Создать сервис токенов: генерация секрета (crypto), sha-256 хэш, prefix, отзыв по id или имени; секрет возвращается только при создании
-- [ ] 4.4 Создать bearer-middleware: парсинг `Authorization`, поиск активного токена по хэшу, 401 + `WWW-Authenticate: Bearer` при отсутствии/невалидности/отзыве, обновление `last_used_at`; поддержка `AUTH_DISABLED=true`; тесты всех сценариев
-- [ ] 4.5 Создать CLI `src/cli/token.ts` (list/create/revoke), второй entry в tsup (`dist/token.js`), скрипт `token`; тесты команд на in-memory репозитории (секрет печатается один раз, list без секретов)
-- [ ] 4.6 Добавить API-слот: пример защищённого маршрута `/api` под bearer-middleware (`/health`, `/ready`, `/doc` без токена); тесты
-- [ ] 4.7 Прогнать полный набор проверок группы
+- [x] 4.1 Описать схему `src/db/schema/token.ts` (`id`, `name`, `token_hash`, `prefix`, `created_at`, `revoked_at`, `last_used_at`, индекс по `token_hash`) и сгенерировать миграцию `drizzle-kit generate`
+- [x] 4.2 Создать репозиторий токенов (интерфейс + drizzle-реализация + in-memory реализация для тестов): list/create/revoke/find-active-by-hash/touch-last-used
+- [x] 4.3 Создать сервис токенов: генерация секрета (crypto), sha-256 хэш, prefix, отзыв по id или имени; секрет возвращается только при создании
+- [x] 4.4 Создать bearer-middleware: парсинг `Authorization`, поиск активного токена по хэшу, 401 + `WWW-Authenticate: Bearer` при отсутствии/невалидности/отзыве, обновление `last_used_at`; поддержка `AUTH_DISABLED=true`; тесты всех сценариев
+- [x] 4.5 Создать CLI `src/cli/token.ts` (list/create/revoke), второй entry в tsup (`dist/token.js`), скрипт `token`; тесты команд на in-memory репозитории (секрет печатается один раз, list без секретов)
+- [x] 4.6 Добавить API-слот: пример защищённого маршрута `/api` под bearer-middleware (`/health`, `/ready`, `/doc` без токена); тесты
+- [x] 4.7 Прогнать полный набор проверок группы
 
 ## 5. MCP-модуль <!-- tier: heavy -->
 

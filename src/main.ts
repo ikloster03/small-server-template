@@ -2,6 +2,7 @@ import { serve } from "@hono/node-server";
 import { fileURLToPath } from "node:url";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import { createApp } from "./app.js";
+import { createDrizzleTokenRepository } from "./auth/drizzle-token-repository.js";
 import { createDb } from "./db/client.js";
 import { loadEnv } from "./env.js";
 import { createLogger } from "./logger.js";
@@ -25,7 +26,12 @@ export async function bootstrap(): Promise<BootstrapHandle> {
     await pool.close().catch(() => {});
     process.exit(1);
   }
-  const app = createApp({ logger, db: pool });
+  const app = createApp({
+    logger,
+    db: pool,
+    tokens: createDrizzleTokenRepository(pool.db),
+    authDisabled: env.AUTH_DISABLED,
+  });
   const server = serve({ fetch: app.fetch, port: env.PORT }, (info) => {
     logger.info({ port: info.port }, "server listening");
   });

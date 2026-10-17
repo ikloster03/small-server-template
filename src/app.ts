@@ -5,21 +5,25 @@ import { pino } from "pino";
 import type { AppEnv } from "./context.js";
 
 export type { AppEnv };
+import type { TokenRepository } from "./auth/token-repository.js";
 import type { DbPool } from "./db/client.js";
 import { requestLogger, type Logger } from "./logger.js";
 import { requestId } from "./middleware/request-id.js";
+import { apiModule } from "./modules/api/routes.js";
 import { healthModule } from "./modules/health/routes.js";
 
 export interface AppDeps {
   logger: Logger;
   db: Pick<DbPool, "ready">;
+  tokens: TokenRepository;
+  authDisabled: boolean;
 }
 
 export interface AppModule {
   register: (app: Hono<AppEnv>, deps: AppDeps) => void;
 }
 
-export const modules: AppModule[] = [healthModule];
+export const modules: AppModule[] = [healthModule, apiModule];
 
 export const OPENAPI_SPEC_PATH = "/openapi.json";
 export const DOC_PATH = "/doc";
@@ -27,14 +31,18 @@ export const DOC_PATH = "/doc";
 export interface CreateAppOptions {
   logger?: Logger;
   db: AppDeps["db"];
+  tokens: AppDeps["tokens"];
+  authDisabled?: boolean;
 }
 
 export function createApp({
   logger = pino({ level: "silent" }),
   db,
+  tokens,
+  authDisabled = false,
 }: CreateAppOptions): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
-  const deps: AppDeps = { logger, db };
+  const deps: AppDeps = { logger, db, tokens, authDisabled };
   app.use(requestId());
   app.use(requestLogger(logger));
   for (const module of modules) {
