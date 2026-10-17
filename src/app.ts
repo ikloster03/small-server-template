@@ -11,6 +11,7 @@ import { requestLogger, type Logger } from "./logger.js";
 import { requestId } from "./middleware/request-id.js";
 import { apiModule } from "./modules/api/routes.js";
 import { healthModule } from "./modules/health/routes.js";
+import { mcpModule } from "./modules/mcp/routes.js";
 
 export interface AppDeps {
   logger: Logger;
@@ -23,7 +24,7 @@ export interface AppModule {
   register: (app: Hono<AppEnv>, deps: AppDeps) => void;
 }
 
-export const modules: AppModule[] = [healthModule, apiModule];
+export const modules: AppModule[] = [healthModule, apiModule, mcpModule];
 
 export const OPENAPI_SPEC_PATH = "/openapi.json";
 export const DOC_PATH = "/doc";
@@ -33,6 +34,7 @@ export interface CreateAppOptions {
   db: AppDeps["db"];
   tokens: AppDeps["tokens"];
   authDisabled?: boolean;
+  modules?: AppModule[];
 }
 
 export function createApp({
@@ -40,12 +42,13 @@ export function createApp({
   db,
   tokens,
   authDisabled = false,
+  modules: appModules = modules,
 }: CreateAppOptions): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
   const deps: AppDeps = { logger, db, tokens, authDisabled };
   app.use(requestId());
   app.use(requestLogger(logger));
-  for (const module of modules) {
+  for (const module of appModules) {
     module.register(app, deps);
   }
   app.get(
