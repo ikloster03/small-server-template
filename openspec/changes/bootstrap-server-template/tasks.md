@@ -69,10 +69,10 @@ Workflow `.github/workflows/ci.yml` добавлен владельцем; пр�
 
 Шаг `docker build` в CI падает с `open Dockerfile: no such file or directory`: `Dockerfile` и `docker-compose.yml` из задач 6.2–6.3 отсутствуют в репозитории. Группа создаёт их по design D7/D10; это обычные файлы репозитория, правятся исполнителем.
 
-- [ ] 9.1 Создать multi-stage `Dockerfile` по D7: этап install на `oven/bun` (`bun install --frozen-lockfile`), этап сборки `tsup`, рантайм `node:24-alpine` (только `dist/`, `drizzle/`, `package.json`), non-root пользователь, `CMD node dist/main.js` <!-- est: 30m -->
-- [ ] 9.2 Создать `docker-compose.yml`: сервисы `db` (postgres, healthcheck) и `server` (build, healthcheck по `/health`, `depends_on: service_healthy`), переменные окружения зеркально `compose.external-db.yml` <!-- est: 20m -->
-- [ ] 9.3 Проверить, что `.dockerignore` не исключает входы сборки: `Dockerfile`, `package.json`, `bun.lock`, `tsconfig.json`, `tsup.config.ts`, `src/`, `drizzle/` <!-- est: 5m -->
-- [ ] 9.4 Проверить локально `docker compose -f docker-compose.yml config` и `docker compose -f compose.external-db.yml config`; при доступном Docker — `docker build -t small-server-template:ci .`; прогнать `format`, `build`, `lint`, `format:check`, `test` и `openspec validate` <!-- est: 10m -->
+- [x] 9.1 Создать multi-stage `Dockerfile` по D7: этап install на `oven/bun` (`bun install --frozen-lockfile`), этап сборки `tsup`, рантайм `node:24-alpine` (только `dist/`, `drizzle/`, `package.json`), non-root пользователь, `CMD node dist/main.js` <!-- est: 30m -->
+- [x] 9.2 Создать `docker-compose.yml`: сервисы `db` (postgres, healthcheck) и `server` (build, healthcheck по `/health`, `depends_on: service_healthy`), переменные окружения зеркально `compose.external-db.yml` <!-- est: 20m -->
+- [x] 9.3 Проверить, что `.dockerignore` не исключает входы сборки: `Dockerfile`, `package.json`, `bun.lock`, `tsconfig.json`, `tsup.config.ts`, `src/`, `drizzle/` <!-- est: 5m -->
+- [x] 9.4 Проверить локально `docker compose -f docker-compose.yml config` и `docker compose -f compose.external-db.yml config`; при доступном Docker — `docker build -t small-server-template:ci .`; прогнать `format`, `build`, `lint`, `format:check`, `test` и `openspec validate` <!-- est: 10m -->
 
 ## 10. Зелёный шаг Docker build в CI <!-- tier: fast -->
 
