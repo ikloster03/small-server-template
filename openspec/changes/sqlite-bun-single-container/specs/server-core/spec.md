@@ -1,6 +1,14 @@
-## MODIFIED Requirements
+## REMOVED Requirements
 
 ### Requirement: Fail-fast валидация окружения
+
+**Reason**: Состав переменных изменился: `DATABASE_URL` заменён на `DATABASE_PATH` — сценарий отсутствия URL больше не воспроизводим.
+
+**Migration**: Требование переформулировано под новый набор переменных и добавлено ниже (секция ADDED) как «Fail-fast валидация переменных окружения» со сценарием отсутствия `DATABASE_PATH`.
+
+## ADDED Requirements
+
+### Requirement: Fail-fast валидация переменных окружения
 
 Сервер ДОЛЖЕН (MUST) валидировать переменные окружения (`PORT`, `DATABASE_PATH`, `LOG_LEVEL`, `AUTH_DISABLED`) через zod-схему до открытия порта. При невалидном или отсутствующем обязательном значении процесс ДОЛЖЕН (MUST) завершиться с ненулевым кодом и понятным сообщением об ошибке.
 
@@ -14,6 +22,8 @@
 
 - **WHEN** `PORT=not-a-number`
 - **THEN** процесс завершается с ошибкой валидации до запуска HTTP-сервера
+
+## MODIFIED Requirements
 
 ### Requirement: HTTP-сервер на Hono
 
