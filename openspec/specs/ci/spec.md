@@ -1,7 +1,7 @@
 # ci Specification
 
 ## Purpose
-TBD - created by archiving change bootstrap-server-template. Update Purpose after archive.
+Непрерывная интеграция репозитория: пайплайн проверок (typecheck, lint, format, тесты) и сборка Docker-образа на каждый PR и push в main.
 
 ## Requirements
 

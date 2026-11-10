@@ -1,7 +1,7 @@
 # token-auth Specification
 
 ## Purpose
-TBD - created by archiving change bootstrap-server-template. Update Purpose after archive.
+Аутентификация по статическим bearer-токенам: хранение в БД только SHA-256 хэша, CLI управления внутри контейнера, защита /api и /mcp, режим отключения для разработки.
 
 ## Requirements
 

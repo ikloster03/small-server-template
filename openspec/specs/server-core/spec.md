@@ -1,7 +1,7 @@
 # server-core Specification
 
 ## Purpose
-TBD - created by archiving change bootstrap-server-template. Update Purpose after archive.
+Ядро HTTP-сервера: fail-fast валидация окружения, Hono на рантайме Bun, health/readiness-эндпоинты, graceful shutdown, логирование с request-id, OpenAPI + Scalar UI.
 
 ## Requirements
 

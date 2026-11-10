@@ -1,7 +1,7 @@
 # database Specification
 
 ## Purpose
-TBD - created by archiving change bootstrap-server-template. Update Purpose after archive.
+Слой хранения на встраиваемой SQLite: открытие с WAL и busy_timeout, программные миграции Drizzle при старте до открытия порта, закрытие при graceful shutdown.
 
 ## Requirements
 

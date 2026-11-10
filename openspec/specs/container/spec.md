@@ -1,7 +1,7 @@
 # container Specification
 
 ## Purpose
-TBD - created by archiving change bootstrap-server-template. Update Purpose after archive.
+Контейнеризация шаблона: multi-stage Dockerfile на Bun, compose из одного сервиса с томом под файл SQLite, healthcheck контейнера.
 
 ## Requirements
 

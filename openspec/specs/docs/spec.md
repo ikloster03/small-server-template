@@ -1,7 +1,7 @@
 # docs Specification
 
 ## Purpose
-TBD - created by archiving change bootstrap-server-template. Update Purpose after archive.
+Документация репозитория: двуязычный README (EN/RU), отражающий актуальный стек и команды, проверяемые как написано.
 
 ## Requirements
 

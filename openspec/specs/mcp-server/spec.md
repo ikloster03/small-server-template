@@ -1,7 +1,7 @@
 # mcp-server Specification
 
 ## Purpose
-TBD - created by archiving change bootstrap-server-template. Update Purpose after archive.
+MCP-эндпоинт по Streamable HTTP в том же процессе: транспорт stateless, реестр инструментов с zod-схемами, защита bearer-токеном.
 
 ## Requirements
 
