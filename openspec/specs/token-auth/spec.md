@@ -5,9 +5,9 @@ TBD - created by archiving change bootstrap-server-template. Update Purpose afte
 
 ## Requirements
 
-### Requirement: Хранение bearer-токенов в Postgres
+### Requirement: Хранение bearer-токенов в базе
 
-Токены ДОЛЖНЫ (MUST) храниться в таблице `tokens` со полями: `id`, `name`, `token_hash` (sha-256 секрета), `prefix` (фрагмент секрета для узнаваемости), `created_at`, `revoked_at`, `last_used_at`. В БД НЕ ДОЛЖНО (MUST NOT) храниться значение секрета. Секрет ДОЛЖЕН (MUST) генерироваться криптографически стойким генератором и отображаться ровно один раз — при создании.
+Токены ДОЛЖНЫ (MUST) храниться в таблице `tokens` встроенной БД со полями: `id`, `name`, `token_hash` (sha-256 секрета), `prefix` (фрагмент секрета для узнаваемости), `created_at`, `revoked_at`, `last_used_at`. В БД НЕ ДОЛЖНО (MUST NOT) храниться значение секрета. Секрет ДОЛЖЕН (MUST) генерироваться криптографически стойким генератором и отображаться ровно один раз — при создании.
 
 #### Scenario: Создание токена
 
