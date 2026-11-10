@@ -32,7 +32,7 @@ describe("createDb", () => {
     }).not.toThrow();
   });
 
-  it("падает на не-записываемом пути", () => {
-    expect(() => createDb({ DATABASE_PATH: "/proc/nonexistent-dir/app.db" })).toThrow();
+  it("падает, когда каталог — это файл (ENOTDIR)", () => {
+    expect(() => createDb({ DATABASE_PATH: "/etc/hosts/app.db" })).toThrow();
   });
 });
