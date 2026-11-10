@@ -1,7 +1,7 @@
 # background-jobs Specification
 
 ## Purpose
-TBD - created by archiving change sqlite-bun-single-container. Update Purpose after archive.
+Встроенная очередь фоновых задач небольшого сервера: постановка, отложенный запуск, повторы с backoff и dead-letter — без внешнего брокера, на таблице в той же встроенной БД.
 
 ## Requirements
 
