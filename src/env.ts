@@ -4,12 +4,9 @@ const LOG_LEVELS = ["fatal", "error", "warn", "info", "debug", "trace", "silent"
 
 export const envSchema = z.object({
   PORT: z.coerce.number().int().min(1).max(65535).default(3000),
-  DATABASE_URL: z
-    .string()
-    .min(1)
-    .refine((value) => value.startsWith("postgres://") || value.startsWith("postgresql://"), {
-      message: "должен быть URL PostgreSQL (postgres:// или postgresql://)",
-    }),
+  DATABASE_PATH: z.string().min(1, {
+    message: "должен быть путём к файлу SQLite (например /data/app.db)",
+  }),
   LOG_LEVEL: z.enum(LOG_LEVELS).default("info"),
   AUTH_DISABLED: z
     .enum(["true", "false"])

@@ -1,10 +1,10 @@
-import { and, desc, eq, isNull, sql } from "drizzle-orm";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { and, desc, eq, isNull } from "drizzle-orm";
+import type { BunSQLiteDatabase } from "drizzle-orm/bun-sqlite";
 import type * as schema from "../db/schema/index.js";
 import { tokens } from "../db/schema/token.js";
 import type { CreateTokenInput, TokenRecord, TokenRepository } from "./token-repository.js";
 
-export type TokenDatabase = PostgresJsDatabase<typeof schema>;
+export type TokenDatabase = BunSQLiteDatabase<typeof schema>;
 
 export function createDrizzleTokenRepository(db: TokenDatabase): TokenRepository {
   return {
@@ -23,10 +23,14 @@ export function createDrizzleTokenRepository(db: TokenDatabase): TokenRepository
     async revoke(id: string): Promise<TokenRecord | null> {
       const [row] = await db
         .update(tokens)
-        .set({ revokedAt: sql`coalesce(${tokens.revokedAt}, now())` })
-        .where(eq(tokens.id, id))
+        .set({ revokedAt: new Date() })
+        .where(and(eq(tokens.id, id), isNull(tokens.revokedAt)))
         .returning();
-      return row ?? null;
+      if (row !== undefined) {
+        return row;
+      }
+      const [existing] = await db.select().from(tokens).where(eq(tokens.id, id)).limit(1);
+      return existing ?? null;
     },
 
     async findActiveByHash(tokenHash: string): Promise<TokenRecord | null> {
