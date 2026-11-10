@@ -7,6 +7,8 @@ const mocks = vi.hoisted(() => ({
   ready: vi.fn(),
   createDb: vi.fn(),
   enableGracefulShutdown: vi.fn(),
+  createJobsQueue: vi.fn(),
+  createJobsWorker: vi.fn(),
 }));
 
 vi.mock("./http-server.js", () => ({
@@ -23,6 +25,11 @@ vi.mock("drizzle-orm/bun-sqlite/migrator", () => ({
 
 vi.mock("./shutdown.js", () => ({
   enableGracefulShutdown: mocks.enableGracefulShutdown,
+}));
+
+vi.mock("./modules/jobs/index.js", () => ({
+  createJobsQueue: mocks.createJobsQueue,
+  createJobsWorker: mocks.createJobsWorker,
 }));
 
 const { bootstrap } = await import("./main.js");
@@ -43,6 +50,10 @@ describe("bootstrap", () => {
     mocks.ready.mockReset();
     mocks.enableGracefulShutdown.mockReset();
     mocks.enableGracefulShutdown.mockReturnValue(vi.fn());
+    mocks.createJobsQueue.mockReset();
+    mocks.createJobsQueue.mockReturnValue({});
+    mocks.createJobsWorker.mockReset();
+    mocks.createJobsWorker.mockReturnValue({ start: vi.fn(), stop: vi.fn(), tick: vi.fn() });
   });
 
   afterEach(() => {

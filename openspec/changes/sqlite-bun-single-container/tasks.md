@@ -14,8 +14,8 @@
 
 ## 3. Контейнер
 
-- [ ] 3.1 Перестроить `Dockerfile` на `oven/bun` (multi-stage, alpine-рантайм, non-root, бандл + миграции); проверить smoke-запуском собранного образа с dummy `DATABASE_PATH` на не-записываемый путь — ожидаем fail-fast приложения, но не `ERR_MODULE_NOT_FOUND`
-- [ ] 3.2 Сократить `docker-compose.yml` до одного сервиса с томом под `/data`, удалить `compose.external-db.yml` и `POSTGRES_*` из `.env.example`; проверить `docker compose -f docker-compose.yml config` без ошибок
+- [x] 3.1 Перестроить `Dockerfile` на `oven/bun` (multi-stage, alpine-рантайм, non-root, бандл + миграции); проверить smoke-запуском собранного образа с dummy `DATABASE_PATH` на не-записываемый путь — ожидаем fail-fast приложения, но не `ERR_MODULE_NOT_FOUND`
+- [x] 3.2 Сократить `docker-compose.yml` до одного сервиса с томом под `/data`, удалить `compose.external-db.yml` и `POSTGRES_*` из `.env.example`; проверить `docker compose -f docker-compose.yml config` без ошибок
 
 ## 4. Токены на SQLite
 
@@ -24,15 +24,15 @@
 
 ## 5. Модуль очереди background-jobs
 
-- [ ] 5.1 Добавить схему `jobs` (`id`, `kind`, `payload` JSON text, `status`, `run_at`, `attempts`, `created_at`) в `src/db/schema/` и сгенерировать миграцию
-- [ ] 5.2 Реализовать модуль `src/modules/jobs/`: постановка задач, воркер-поллинг с атомарным захватом в транзакции, переходы статусов, повторы с backoff и лимитом попыток в `failed`; покрыть юнит-тестами с фиктивными таймерами (в т.ч. сценарии «ошибка обработчика» и «исчерпание попыток»)
-- [ ] 5.3 Подключить модуль очереди одной строкой в `src/app.ts` и проверить тестом, что без этой строки HTTP/auth/MCP работают без изменений (модульность)
+- [x] 5.1 Добавить схему `jobs` (`id`, `kind`, `payload` JSON text, `status`, `run_at`, `attempts`, `created_at`) в `src/db/schema/` и сгенерировать миграцию
+- [x] 5.2 Реализовать модуль `src/modules/jobs/`: постановка задач, воркер-поллинг с атомарным захватом в транзакции, переходы статусов, повторы с backoff и лимитом попыток в `failed`; покрыть юнит-тестами с фиктивными таймерами (в т.ч. сценарии «ошибка обработчика» и «исчерпание попыток»)
+- [x] 5.3 Подключить модуль очереди одной строкой в `src/app.ts` и проверить тестом, что без этой строки HTTP/auth/MCP работают без изменений (модульность)
 
 ## 6. Интеграция и документация
 
-- [ ] 6.1 Обновить `README.md` и `README.ru.md`: quick start без Postgres, таблица env (`DATABASE_PATH`), раздел про очередь задач; убедиться, что описанные команды выполняются как написано
-- [ ] 6.2 Локальная интеграция: `docker compose up` поднимает один сервис, `/health` и `/ready` дают `200`, пересоздание контейнера без удаления тома сохраняет токены и задачи
-- [ ] 6.3 Финальные проверки: `bun run typecheck`, `bun run lint`, `bun test` — все зелёные; `openspec validate sqlite-bun-single-container` без ошибок
+- [x] 6.1 Обновить `README.md` и `README.ru.md`: quick start без Postgres, таблица env (`DATABASE_PATH`), раздел про очередь задач; убедиться, что описанные команды выполняются как написано
+- [x] 6.2 Локальная интеграция: `docker compose up` поднимает один сервис, `/health` и `/ready` дают `200`, пересоздание контейнера без удаления тома сохраняет токены и задачи
+- [x] 6.3 Финальные проверки: `bun run typecheck`, `bun run lint`, `bun test` — все зелёные; `openspec validate sqlite-bun-single-container` без ошибок
 
 ## Workflow follow-up
 

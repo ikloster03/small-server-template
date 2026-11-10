@@ -4,10 +4,7 @@
 // (vite/node ESM-лоадер не умеет протокол bun:). Под Bun разницы нет: та же
 // SQLiteBunSession и тот же construct(), клиент всегда передаётся готовый.
 import { DefaultLogger } from "drizzle-orm/logger";
-import {
-  createTableRelationsHelpers,
-  extractTablesRelationalConfig,
-} from "drizzle-orm/relations";
+import { createTableRelationsHelpers, extractTablesRelationalConfig } from "drizzle-orm/relations";
 import { BaseSQLiteDatabase } from "drizzle-orm/sqlite-core/db";
 import { SQLiteSyncDialect } from "drizzle-orm/sqlite-core/dialect";
 import { isConfig } from "drizzle-orm/utils";
@@ -27,10 +24,7 @@ function construct(client, config = {}) {
   }
   let schema;
   if (config.schema) {
-    const tablesConfig = extractTablesRelationalConfig(
-      config.schema,
-      createTableRelationsHelpers,
-    );
+    const tablesConfig = extractTablesRelationalConfig(config.schema, createTableRelationsHelpers);
     schema = {
       fullSchema: config.schema,
       schema: tablesConfig.tables,

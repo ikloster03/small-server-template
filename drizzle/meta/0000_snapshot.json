@@ -60,9 +60,7 @@
       "indexes": {
         "tokens_token_hash_idx": {
           "name": "tokens_token_hash_idx",
-          "columns": [
-            "token_hash"
-          ],
+          "columns": ["token_hash"],
           "isUnique": false
         }
       },
