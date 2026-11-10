@@ -3,7 +3,7 @@ import { loadEnv } from "./env.js";
 
 const validEnv = {
   PORT: "8080",
-  DATABASE_URL: "postgres://postgres:postgres@localhost:5432/app",
+  DATABASE_PATH: "/tmp/app.db",
   LOG_LEVEL: "debug",
   AUTH_DISABLED: "true",
 };
@@ -25,14 +25,14 @@ describe("loadEnv", () => {
     const env = loadEnv(validEnv);
     expect(env).toEqual({
       PORT: 8080,
-      DATABASE_URL: "postgres://postgres:postgres@localhost:5432/app",
+      DATABASE_PATH: "/tmp/app.db",
       LOG_LEVEL: "debug",
       AUTH_DISABLED: true,
     });
   });
 
   it("подставляет значения по умолчанию", () => {
-    const env = loadEnv({ DATABASE_URL: "postgres://localhost:5432/app" });
+    const env = loadEnv({ DATABASE_PATH: "/tmp/app.db" });
     expect(env.PORT).toBe(3000);
     expect(env.LOG_LEVEL).toBe("info");
     expect(env.AUTH_DISABLED).toBe(false);
@@ -44,11 +44,11 @@ describe("loadEnv", () => {
     expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining("PORT"));
   });
 
-  it("завершает процесс при отсутствии DATABASE_URL с упоминанием переменной", () => {
-    const { DATABASE_URL: _omitted, ...withoutDb } = validEnv;
+  it("завершает процесс при отсутствии DATABASE_PATH с упоминанием переменной", () => {
+    const { DATABASE_PATH: _omitted, ...withoutDb } = validEnv;
     loadEnv(withoutDb);
     expect(exitSpy).toHaveBeenCalledWith(1);
-    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining("DATABASE_URL"));
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining("DATABASE_PATH"));
   });
 
   it("завершает процесс при невалидном LOG_LEVEL", () => {

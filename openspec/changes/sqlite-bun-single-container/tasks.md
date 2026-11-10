@@ -2,15 +2,15 @@
 
 ## 1. Слой БД на SQLite
 
-- [ ] 1.1 Убрать зависимости `postgres` и `@hono/node-server` из `package.json`, проверить, что `bun install` проходит и `bun.lock` обновлён
-- [ ] 1.2 Переписать `src/db/client.ts` на `bun:sqlite` + `drizzle-orm/bun-sqlite`: прагмы WAL / busy_timeout / foreign_keys при открытии, `ready()` через `select 1`, `close()` для graceful shutdown; обновить `src/db/client.test.ts` и убедиться, что тесты проходят
-- [ ] 1.3 Перевести `src/db/schema/token.ts` на `sqliteTable` (uuid из кода через `$defaultFn(crypto.randomUUID())`, таймстемпы `integer({ mode: "timestamp" })`), переключить `drizzle.config.ts` на dialect `sqlite`, сгенерировать новую миграцию в `drizzle/` и убедиться, что `bun run db:generate` её создаёт
-- [ ] 1.4 Заменить мигратор в `src/main.ts` на `drizzle-orm/bun-sqlite/migrator`, проверить стартовым тестом: миграции применяются до открытия порта, при ошибке миграции процесс выходит с ненулевым кодом
+- [x] 1.1 Убрать зависимости `postgres` и `@hono/node-server` из `package.json`, проверить, что `bun install` проходит и `bun.lock` обновлён
+- [x] 1.2 Переписать `src/db/client.ts` на `bun:sqlite` + `drizzle-orm/bun-sqlite`: прагмы WAL / busy_timeout / foreign_keys при открытии, `ready()` через `select 1`, `close()` для graceful shutdown; обновить `src/db/client.test.ts` и убедиться, что тесты проходят
+- [x] 1.3 Перевести `src/db/schema/token.ts` на `sqliteTable` (uuid из кода через `$defaultFn(crypto.randomUUID())`, таймстемпы `integer({ mode: "timestamp" })`), переключить `drizzle.config.ts` на dialect `sqlite`, сгенерировать новую миграцию в `drizzle/` и убедиться, что `bun run db:generate` её создаёт
+- [x] 1.4 Заменить мигратор в `src/main.ts` на `drizzle-orm/bun-sqlite/migrator`, проверить стартовым тестом: миграции применяются до открытия порта, при ошибке миграции процесс выходит с ненулевым кодом
 
 ## 2. Рантайм Bun и окружение
 
-- [ ] 2.1 Запустить HTTP-сервер через `Bun.serve` в `src/main.ts` (порт открывается после env + БД + миграций), адаптировать graceful shutdown и проверить тестом порядок инициализации
-- [ ] 2.2 Заменить в `src/env.ts` `DATABASE_URL` на `DATABASE_PATH` (путь к файлу, default `/data/app.db`), обновить `src/env.test.ts`: отсутствие переменной/невалидный `PORT` дают fail-fast до открытия порта
+- [x] 2.1 Запустить HTTP-сервер через `Bun.serve` в `src/main.ts` (порт открывается после env + БД + миграций), адаптировать graceful shutdown и проверить тестом порядок инициализации
+- [x] 2.2 Заменить в `src/env.ts` `DATABASE_URL` на `DATABASE_PATH` (путь к файлу, default `/data/app.db`), обновить `src/env.test.ts`: отсутствие переменной/невалидный `PORT` дают fail-fast до открытия порта
 
 ## 3. Контейнер
 
@@ -19,8 +19,8 @@
 
 ## 4. Токены на SQLite
 
-- [ ] 4.1 Адаптировать `src/auth/drizzle-token-repository.ts` (убрать SQL `now()` — передавать `new Date()` из кода), прогнать интеграционный тест репозитория на SQLite (temp-файл или `:memory:`)
-- [ ] 4.2 Проверить CLI `token.js` под Bun: `list`, `create --name demo` (секрет печатается один раз), `revoke demo` — вручную на локальном запуске, зафиксировать вывод
+- [x] 4.1 Адаптировать `src/auth/drizzle-token-repository.ts` (убрать SQL `now()` — передавать `new Date()` из кода), прогнать интеграционный тест репозитория на SQLite (temp-файл или `:memory:`)
+- [x] 4.2 Проверить CLI `token.js` под Bun: `list`, `create --name demo` (секрет печатается один раз), `revoke demo` — вручную на локальном запуске, зафиксировать вывод
 
 ## 5. Модуль очереди background-jobs
 

@@ -1,17 +1,17 @@
-import { serve } from "@hono/node-server";
 import { fileURLToPath } from "node:url";
-import { migrate } from "drizzle-orm/postgres-js/migrator";
+import { migrate } from "drizzle-orm/bun-sqlite/migrator";
 import { createApp } from "./app.js";
 import { createDrizzleTokenRepository } from "./auth/drizzle-token-repository.js";
 import { createDb } from "./db/client.js";
 import { loadEnv } from "./env.js";
+import { startServer, type HttpServerHandle } from "./http-server.js";
 import { createLogger } from "./logger.js";
 import { enableGracefulShutdown } from "./shutdown.js";
 
 const migrationsFolder = fileURLToPath(new URL("../drizzle", import.meta.url));
 
 export interface BootstrapHandle {
-  server: ReturnType<typeof serve>;
+  server: HttpServerHandle;
   disposeSignalHandlers: () => void;
 }
 
@@ -20,7 +20,7 @@ export async function bootstrap(): Promise<BootstrapHandle> {
   const logger = createLogger(env);
   const pool = createDb(env);
   try {
-    await migrate(pool.db, { migrationsFolder });
+    migrate(pool.db, { migrationsFolder });
   } catch (error) {
     logger.error({ err: error }, "migrations failed");
     await pool.close().catch(() => {});
@@ -32,8 +32,8 @@ export async function bootstrap(): Promise<BootstrapHandle> {
     tokens: createDrizzleTokenRepository(pool.db),
     authDisabled: env.AUTH_DISABLED,
   });
-  const server = serve({ fetch: app.fetch, port: env.PORT }, (info) => {
-    logger.info({ port: info.port }, "server listening");
+  const server = startServer(app, env.PORT, (port) => {
+    logger.info({ port }, "server listening");
   });
   const disposeSignalHandlers = enableGracefulShutdown({
     logger,
