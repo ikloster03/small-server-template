@@ -31,14 +31,11 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
 
       - name: Bump version and update CHANGELOG.md
         env:
@@ -56,9 +53,9 @@ jobs:
 
           if [ -z "$(git tag --list)" ]; then
             echo "No git tags: first changelogen release is 1.0.0"
-            npx --no -- changelogen --bump -r 1.0.0
+            bunx changelogen --bump -r 1.0.0
           else
-            npx --no -- changelogen --bump "--${BUMP}"
+            bunx changelogen --bump "--${BUMP}"
           fi
 
       - name: Commit package.json and CHANGELOG.md
@@ -81,4 +78,4 @@ jobs:
         run: |
           set -euo pipefail
           VERSION="$(node -p "require('./package.json').version")"
-          npx --no -- changelogen gh release "${VERSION}"
+          bunx changelogen gh release "${VERSION}"
